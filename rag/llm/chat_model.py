@@ -38,10 +38,11 @@ class Base(ABC):
         timeout = int(os.environ.get('LM_TIMEOUT_SECONDS', 600))
         self.client = OpenAI(api_key=key, base_url=base_url, timeout=timeout)
         self.model_name = model_name
+        self.system_role = 'system'
 
     def chat(self, system, history, gen_conf):
         if system:
-            history.insert(0, {"role": "system", "content": system})
+            history.insert(0, {"role": self.system_role, "content": system})
         try:
             response = self.client.chat.completions.create(
                 model=self.model_name,
@@ -59,7 +60,7 @@ class Base(ABC):
 
     def chat_streamly(self, system, history, gen_conf):
         if system:
-            history.insert(0, {"role": "system", "content": system})
+            history.insert(0, {"role": self.system_role, "content": system})
         ans = ""
         total_tokens = 0
         try:
@@ -102,8 +103,85 @@ class GptTurbo(Base):
     def __init__(self, key, model_name="gpt-3.5-turbo", base_url="https://api.openai.com/v1"):
         if not base_url:
             base_url = "https://api.openai.com/v1"
+
         super().__init__(key, model_name, base_url)
 
+        self.system_role = 'developer'
+
+        if self.model_name in ('o1-mini, o1-preview'):
+            self.system_role = 'user'
+
+    def _update_gen_conf_paras(self, gen_conf):
+        if 'max_tokens' in gen_conf:
+            gen_conf['max_completion_tokens'] = gen_conf.pop('max_tokens')
+
+        if self.model_name and self.model_name.startswith('o1'):
+            unsupported_paras = ["temperature", "top_p", "presence_penalty",
+                                 "frequency_penalty", "logprobs", "top_logprobs", "logit_bias"]
+            for p in unsupported_paras:
+                gen_conf.pop(p, None)
+
+    def chat(self, system, history, gen_conf):
+        self._update_gen_conf_paras(gen_conf)
+
+        if system:
+            history.insert(0, {"role": self.system_role, "content": system})
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model_name,
+                messages=history,
+                **gen_conf)
+            ans = response.choices[0].message.content.strip()
+            if response.choices[0].finish_reason == "length":
+                if is_chinese(ans):
+                    ans += LENGTH_NOTIFICATION_CN
+                else:
+                    ans += LENGTH_NOTIFICATION_EN
+            return ans, response.usage.total_tokens
+        except openai.APIError as e:
+            return "**ERROR**: " + str(e), 0
+
+    def chat_streamly(self, system, history, gen_conf):
+        self._update_gen_conf_paras(gen_conf)
+
+        if system:
+            history.insert(0, {"role": self.system_role, "content": system})
+        ans = ""
+        total_tokens = 0
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model_name,
+                messages=history,
+                stream=True,
+                **gen_conf)
+            for resp in response:
+                if not resp.choices:
+                    continue
+                if not resp.choices[0].delta.content:
+                    resp.choices[0].delta.content = ""
+                ans += resp.choices[0].delta.content
+
+                if not hasattr(resp, "usage") or not resp.usage:
+                    total_tokens = (
+                                total_tokens
+                                + num_tokens_from_string(resp.choices[0].delta.content)
+                        )
+                elif isinstance(resp.usage, dict):
+                    total_tokens = resp.usage.get("total_tokens", total_tokens)
+                else:
+                    total_tokens = resp.usage.total_tokens
+
+                if resp.choices[0].finish_reason == "length":
+                    if is_chinese(ans):
+                        ans += LENGTH_NOTIFICATION_CN
+                    else:
+                        ans += LENGTH_NOTIFICATION_EN
+                yield ans
+
+        except openai.APIError as e:
+            yield ans + "\n**ERROR**: " + str(e)
+
+        yield total_tokens
 
 class MoonshotChat(Base):
     def __init__(self, key, model_name="moonshot-v1-8k", base_url="https://api.moonshot.cn/v1"):
