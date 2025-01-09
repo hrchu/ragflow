@@ -4,8 +4,8 @@ env:
   # Available options:
   # - `elasticsearch` (default)
   # - `infinity` (https://github.com/infiniflow/infinity)
-  # DOC_ENGINE: elasticsearch
-  DOC_ENGINE: infinity
+  DOC_ENGINE: elasticsearch
+  # DOC_ENGINE: infinity
 
   # The version of Elasticsearch.
   STACK_VERSION: "8.11.3"
@@ -28,10 +28,10 @@ env:
 
   # The RAGFlow Docker image to download.
   # Defaults to the v0.15.1-slim edition, which is the RAGFlow Docker image without embedding models.
-  RAGFLOW_IMAGE: infiniflow/ragflow:v0.15.1-slim
+  # RAGFLOW_IMAGE: infiniflow/ragflow:v0.15.1-slim
   #
   # To download the RAGFlow Docker image with embedding models, uncomment the following line instead:
-  # RAGFLOW_IMAGE=infiniflow/ragflow:v0.15.1
+  RAGFLOW_IMAGE: infiniflow/ragflow:v0.15.1
   #
   # The Docker image of the v0.15.1 edition includes:
   # - Built-in embedding models:
