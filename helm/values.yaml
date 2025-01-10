@@ -31,7 +31,7 @@ env:
   # RAGFLOW_IMAGE: infiniflow/ragflow:v0.15.1-slim
   #
   # To download the RAGFlow Docker image with embedding models, uncomment the following line instead:
-  RAGFLOW_IMAGE: infiniflow/ragflow:v0.15.1
+  RAGFLOW_IMAGE: 127.0.0.1:5000/infiniflow/ragflow:v0.15.1
   #
   # The Docker image of the v0.15.1 edition includes:
   # - Built-in embedding models:
@@ -98,7 +98,7 @@ elasticsearch:
 
 minio:
   image:
-    repository: quay.io/minio/minio
+    repository: 127.0.0.1:5000/minio/minio
     tag: RELEASE.2023-12-20T01-00-02Z
   storage:
     className:
@@ -111,7 +111,7 @@ minio:
 
 mysql:
   image:
-    repository: mysql
+    repository: 127.0.0.1:5000/mysql
     tag: 8.0.39
   storage:
     className:
@@ -124,7 +124,7 @@ mysql:
 
 redis:
   image:
-    repository: valkey/valkey
+    repository: 127.0.0.1:5000/valkey/valkey
     tag: 8
   storage:
     className:
