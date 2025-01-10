@@ -44,7 +44,7 @@ spec:
     spec:
       initContainers:
       - name: fix-data-volume-permissions
-        image: 127.0.0.1:5000/alpine:latest
+        image: {{ .Values.env.IMAGE_REGISTRY }}/alpine:latest
         command:
         - sh
         - -c
@@ -53,14 +53,14 @@ spec:
           - mountPath: /usr/share/elasticsearch/data
             name: es-data
       - name: sysctl
-        image: 127.0.0.1:5000/busybox:latest
+        image: {{ .Values.env.IMAGE_REGISTRY }}/busybox:latest
         securityContext:
           privileged: true
           runAsUser: 0
         command: ["sysctl", "-w", "vm.max_map_count=262144"]
       containers:
       - name: elasticsearch
-        image: 127.0.0.1:5000/elasticsearch/elasticsearch:{{ .Values.env.STACK_VERSION }}
+        image: {{ .Values.env.IMAGE_REGISTRY }}/elasticsearch/elasticsearch:{{ .Values.env.STACK_VERSION }}
         envFrom:
           - secretRef:
               name: {{ include "ragflow.fullname" . }}-env-config

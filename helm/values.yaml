@@ -31,7 +31,7 @@ env:
   # RAGFLOW_IMAGE: infiniflow/ragflow:v0.15.1-slim
   #
   # To download the RAGFlow Docker image with embedding models, uncomment the following line instead:
-  RAGFLOW_IMAGE: 127.0.0.1:5000/infiniflow/ragflow:v0.15.1
+  RAGFLOW_IMAGE: harbor.cht.com.tw:30725/p_cht_845_s3/infiniflow/ragflow:v0.15.1
   #
   # The Docker image of the v0.15.1 edition includes:
   # - Built-in embedding models:
@@ -61,6 +61,8 @@ env:
   # You can uncomment this line and update the value if you wish to change 128M file size limit
   # MAX_CONTENT_LENGTH: "134217728"
   # After making the change, ensure you update `client_max_body_size` in nginx/nginx.conf correspondingly.
+  
+  IMAGE_REGISTRY: "harbor.cht.com.tw:30725/p_cht_845_s3"
 
 ragflow:
   deployment:
@@ -72,7 +74,7 @@ ragflow:
 
 infinity:
   image:
-    repository: infiniflow/infinity
+    repository: harbor.cht.com.tw:30725/p_cht_845_s3/infiniflow/infinity
     tag: v0.5.0
   storage:
     className:
@@ -98,7 +100,7 @@ elasticsearch:
 
 minio:
   image:
-    repository: 127.0.0.1:5000/minio/minio
+    repository: harbor.cht.com.tw:30725/p_cht_845_s3/minio/minio
     tag: RELEASE.2023-12-20T01-00-02Z
   storage:
     className:
@@ -111,8 +113,8 @@ minio:
 
 mysql:
   image:
-    repository: 127.0.0.1:5000/mysql
-    tag: 8.0.39
+    repository: harbor.cht.com.tw:30725/p_cht_845_s3/mysql
+    tag: 8.0.40
   storage:
     className:
     capacity: 5Gi
@@ -124,7 +126,7 @@ mysql:
 
 redis:
   image:
-    repository: 127.0.0.1:5000/valkey/valkey
+    repository: harbor.cht.com.tw:30725/p_cht_845_s3/valkey/valkey
     tag: 8
   storage:
     className:
