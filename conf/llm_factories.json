@@ -7,6 +7,18 @@
             "status": "1",
             "llm": [
                 {
+                    "llm_name": "o1-mini",
+                    "tags": "LLM,CHAT,200K",
+                    "max_tokens": 200000,
+                    "model_type": "chat"
+                },
+                {
+                    "llm_name": "o1",
+                    "tags": "LLM,CHAT,200K",
+                    "max_tokens": 200000,
+                    "model_type": "chat"
+                },
+                {
                     "llm_name": "gpt-4o-mini",
                     "tags": "LLM,CHAT,128K",
                     "max_tokens": 128000,
@@ -71,6 +83,12 @@
                     "tags": "LLM,CHAT,32K",
                     "max_tokens": 32768,
                     "model_type": "chat"
+                },
+                {
+                    "llm_name": "o1-2024-12-17",
+                    "tags": "LLM,CHAT,IMAGE2TEXT",
+                    "max_tokens": 200000,
+                    "model_type": "image2text"
                 },
                 {
                     "llm_name": "gpt-4o-2024-08-06",
